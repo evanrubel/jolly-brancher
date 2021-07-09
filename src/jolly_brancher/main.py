@@ -44,7 +44,7 @@ _logger = logging.getLogger(__name__)
 # CONFIG VARS
 KEYS_AND_PROMPTS = [['auth_email', 'your login email for Atlassian'], ['base_url', 'the base URL for Atlassian (e.g., https://cirrusv2x.atlassian.net)'], ['token', 'your Atlassian API token which can be generated here (https://id.atlassian.com/manage-profile/security/api-tokens)'], ['repo_root', 'the path to the root directory for the repository']]
 CONFIG_DIR = os.path.expanduser('~/.config')
-CONFIG_FILENAME = os.path.join(CONFIG_DIR, 'jolly-rancher.ini')
+CONFIG_FILENAME = os.path.join(CONFIG_DIR, 'jolly_brancher.ini')
 DEFAULT_SECTION_NAME = 'DEFAULT'
 
 def config_setup():
@@ -142,6 +142,19 @@ def main(args):
       args (List[str]): command line parameters as list of strings
           (for example  ``["--verbose", "42"]``).
     """
+
+    config_setup()
+
+    config = configparser.ConfigParser()
+    config.read(CONFIG_FILENAME)
+
+    default_config = config['DEFAULT']
+
+    REPO_ROOT = default_config['repo_root']
+    TOKEN = default_config['token']
+    BASE_URL = default_config['base_url']
+    AUTH_EMAIL = default_config['auth_email']
+
     jira = JIRA(BASE_URL, basic_auth=(AUTH_EMAIL, TOKEN))
 
     repo_dirs = os.listdir(REPO_ROOT)
@@ -200,17 +213,6 @@ if __name__ == "__main__":
     #
     #     python -m jolly_brancher.skeleton 42
     #
-    config_setup()
-
-    config = configparser.ConfigParser()
-    config.read(CONFIG_FILENAME)
-
-    default_config = config['DEFAULT']
-
-    REPO_ROOT = default_config['repo_root']
-    TOKEN = default_config['token']
-    BASE_URL = default_config['base_url']
-    AUTH_EMAIL = default_config['auth_email']
 
     run()
     
