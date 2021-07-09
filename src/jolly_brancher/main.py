@@ -225,11 +225,8 @@ def main(args):
     subprocess.run(cmd, check=True)
 
     # output = subprocess.check_output(['git', 'remote', 'show', 'origin'])
-    output = subprocess.check_output(['git', 'config', '--get', 'remote.origin.url'])
-
-    # git config --get remote.origin.url
-
-    branch_url = output
+    repo_url = str(subprocess.check_output(['git', 'config', '--get', 'remote.origin.url'])).strip('.git\n')
+    branch_url = f'{repo_url}/tree/{branch_name}'
     
     print('Adding comment with branch name to issue...')
     jira.add_comment(myissue, f'Jolly Brancher generated {branch_name} at {branch_url}.')
