@@ -62,7 +62,7 @@ def config_setup():
                 config[DEFAULT_SECTION_NAME][key] = input(f'Please enter {input_prompt}: ')
 
     else:
-        warnings.warn('~/.config/jolly-rancher.ini does not exist. Creating the file now...')
+        warnings.warn('~/.config/jolly-brancher.ini does not exist. Creating the file now...')
         config[DEFAULT_SECTION_NAME] = {key : input(f'Please enter {input_prompt}: ') for key, input_prompt in KEYS_AND_PROMPTS}  # ask for input and set all entries
 
     with open(CONFIG_FILENAME, 'w') as configfile:
