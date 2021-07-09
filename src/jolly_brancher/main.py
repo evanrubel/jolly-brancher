@@ -245,7 +245,7 @@ def main(args):
 
     # push branch to remote repo
     print("Pushing to remote repo...")
-    push_branch_cmd = ["git", "push"]
+    push_branch_cmd = ["git", "push", REMOTE, "HEAD"]
     subprocess.run(push_branch_cmd, check=True)
 
     # get URL to branch on GitHub
