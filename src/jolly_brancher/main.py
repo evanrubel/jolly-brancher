@@ -218,14 +218,19 @@ def main(args):
     # git.checkout('dev')
     # git.reset('--hard', 'upstream/dev')
     # git checkout -b feature/V2X-2226_add-the-following-curves-to-the-curve-database upstream/dev
-
+    
+    # create branch locally
     print(f"Creating the branch {branch_name}")
-    cmd = ["git", "checkout", "-b", branch_name, f"{REMOTE}/{args.parent}"]
+    local_branch_cmd = ["git", "checkout", "-b", branch_name, f"{REMOTE}/{args.parent}"]
+    subprocess.run(local_branch_cmd, check=True)
 
-    subprocess.run(cmd, check=True)
+    # push branch to remote repo
+    print('Pushing to remote repo...')
+    push_branch_cmd = ["git", "push"]
+    subprocess.run(push_branch_cmd, check=True)
 
     # output = subprocess.check_output(['git', 'remote', 'show', 'origin'])
-    repo_url = subprocess.check_output(['git', 'config', '--get', 'remote.origin.url']).decode('utf-8').strip('.git')
+    repo_url = subprocess.check_output(['git', 'config', '--get', 'remote.origin.url']).decode('utf-8').strip('.git\n')
     branch_url = f'{repo_url}/tree/{branch_name}'
     
     print('Adding comment with branch name to issue...')
