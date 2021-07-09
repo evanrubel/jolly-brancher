@@ -234,6 +234,9 @@ def main(args):
         chosen_path = prompt("Choose repository: ", completer=remote_completer)
         REMOTE = remotes[chosen_path]
 
+    fetch_branch_cmd = ["git", "fetch", "--all"]
+    subprocess.run(fetch_branch_cmd, check=True)
+
     local_branch_cmd = [
         "git",
         "checkout",
