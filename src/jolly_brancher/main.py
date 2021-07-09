@@ -24,6 +24,7 @@ import logging
 import os
 import subprocess
 import sys
+import configparser
 
 from jira import JIRA
 from prompt_toolkit import prompt
@@ -32,9 +33,9 @@ from prompt_toolkit.completion import WordCompleter
 from jolly_brancher import __version__
 
 # DONOTCOMMIT
-REPO_ROOT = "/home/ahonnecke/src"
+# REPO_ROOT = "/home/ahonnecke/src"
 REMOTE = "upstream"
-TOKEN = ""
+# TOKEN = ""
 
 __author__ = "Ashton Von Honnecke"
 __copyright__ = "Ashton Von Honnecke"
@@ -42,6 +43,29 @@ __license__ = "MIT"
 
 _logger = logging.getLogger(__name__)
 
+# CONFIG VARS
+KEYS_AND_PROMPTS = [['auth_email', 'your login email for Atlassian'], ['base_url', 'the base URL for Atlassian (e.g., https://cirrusv2x.atlassian.net)'], ['token', 'your Atlassian API token which can be generated here (https://id.atlassian.com/manage-profile/security/api-tokens)'], ['repo_root', 'the path to the root directory for the repository']]
+CONFIG_FILENAME = 'example'
+DEFAULT_SECTION_NAME = 'DEFAULT'
+
+def config_setup():
+    os.chdir('../..')
+
+    config = configparser.ConfigParser()
+
+    if os.path.exists(f'{CONFIG_FILENAME}.ini'):
+        config.read(f'{CONFIG_FILENAME}.ini')
+
+        for key, input_prompt in KEYS_AND_PROMPTS:
+            if key not in config[DEFAULT_SECTION_NAME] or config[DEFAULT_SECTION_NAME][key] == '':  # check all entries are present and populated
+                config[DEFAULT_SECTION_NAME][key] = input(f'Please enter {input_prompt}: ')
+
+    else:
+        config[DEFAULT_SECTION_NAME] = {key : input(f'Please enter {input_prompt}: ') for key, input_prompt in KEYS_AND_PROMPTS}  # ask for input and set all entries
+
+    with open(f'{CONFIG_FILENAME}.ini', 'w') as configfile:
+        config.write(configfile)
+    
 
 # ---- CLI ----
 # The functions defined in this section are wrappers around the main Python
@@ -118,9 +142,9 @@ def main(args):
       args (List[str]): command line parameters as list of strings
           (for example  ``["--verbose", "42"]``).
     """
-    auth_email = "ashton.honnecke@us.panasonic.com"
+    # auth_email = "ashton.honnecke@us.panasonic.com"
 
-    jira = JIRA("https://cirrusv2x.atlassian.net", basic_auth=(auth_email, TOKEN))
+    jira = JIRA(BASE_URL, basic_auth=(AUTH_EMAIL, TOKEN))
 
     repo_dirs = os.listdir(REPO_ROOT)
     args = parse_args(None, repo_dirs)
@@ -179,4 +203,16 @@ if __name__ == "__main__":
     #
     #     python -m jolly_brancher.skeleton 42
     #
+    config_setup()
+
+    config = configparser.ConfigParser()
+    config.read(f'{CONFIG_FILENAME}.ini')
+
+    default_config = config['DEFAULT']
+
+    REPO_ROOT = default_config['repo_root']
+    TOKEN = default_config['token']
+    BASE_URL = default_config['base_url']
+    AUTH_EMAIL = default_config['auth_email']
+
     run()
