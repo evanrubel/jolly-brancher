@@ -29,3 +29,10 @@ Note
 
 This project has been set up using PyScaffold 4.0.2. For details and usage
 information on PyScaffold see https://pyscaffold.org/.
+
+Building
+========
+ * tox -e build  # to build your package distribution
+ * tox -e publish  # to test your project uploads correctly in test.pypi.org
+ * tox -e publish -- --repository pypi  # to release your package to PyPI
+ * tox -av  # to list all the tasks available
