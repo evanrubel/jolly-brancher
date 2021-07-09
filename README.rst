@@ -54,7 +54,7 @@ ahonnecke@contranym:~/src/jolly_brancher$ fibonacci 5
 The 5-th Fibonacci number is 5
 ```
 
-This package requires a configuration .ini file. Upon invocation, you will be prompted for your Atlassian login email, the base Atlassian URL for your organization, your API token (which can be generated [here](https://id.atlassian.com/manage-profile/security/api-tokens)), and the path to the root directory for your repositories. Please see `example.ini` for reference.
+This package requires a configuration ``.ini`` file, which is populated upon invocation. You will be prompted for your Atlassian login email, the base Atlassian URL for your organization, your API token (which can be generated at https://id.atlassian.com/manage-profile/security/api-tokens), and the path to the root directory for your repositories. Please see ``example.ini`` for reference.
 
 .. _pyscaffold-notes:
 
