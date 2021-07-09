@@ -230,6 +230,7 @@ def main(args):
     elif len(remotes) > 1:
         print("The repo has multiple remotes, which should we push to?")
         all_remotes = list(remotes.items())
+        print(all_remotes)
         remote_completer = WordCompleter([x[0] for x in all_remotes])
         chosen_path = prompt("Choose repository: ", completer=remote_completer)
         REMOTE = remotes[chosen_path]
