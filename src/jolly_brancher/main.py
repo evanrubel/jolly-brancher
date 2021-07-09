@@ -261,7 +261,6 @@ def main(args):
     branch_url = f"{repo_url}/tree/{branch_name}"
 
     print("Adding comment with branch name to issue...")
-    # jira.add_comment(myissue, f"Jolly Brancher generated {branch_name}.")
     jira.add_comment(myissue, f"Jolly Brancher generated {branch_url}.")
 
 
