@@ -43,16 +43,18 @@ _logger = logging.getLogger(__name__)
 
 # CONFIG VARS
 KEYS_AND_PROMPTS = [['auth_email', 'your login email for Atlassian'], ['base_url', 'the base URL for Atlassian (e.g., https://cirrusv2x.atlassian.net)'], ['token', 'your Atlassian API token which can be generated here (https://id.atlassian.com/manage-profile/security/api-tokens)'], ['repo_root', 'the path to the root directory for the repository']]
-CONFIG_FILENAME = 'example'
+CONFIG_DIR = os.path.expanduser('~/.config')
+CONFIG_FILENAME = os.path.join(CONFIG_DIR, 'jolly-rancher.ini')
 DEFAULT_SECTION_NAME = 'DEFAULT'
 
 def config_setup():
-    os.chdir('../..')
-
     config = configparser.ConfigParser()
 
-    if os.path.exists(f'{CONFIG_FILENAME}.ini'):
-        config.read(f'{CONFIG_FILENAME}.ini')
+    if not os.path.exists(CONFIG_DIR):
+        os.mkdir(CONFIG_DIR)
+
+    if os.path.exists(CONFIG_FILENAME):
+        config.read(CONFIG_FILENAME)
 
         for key, input_prompt in KEYS_AND_PROMPTS:
             if key not in config[DEFAULT_SECTION_NAME] or config[DEFAULT_SECTION_NAME][key] == '':  # check all entries are present and populated
@@ -61,7 +63,7 @@ def config_setup():
     else:
         config[DEFAULT_SECTION_NAME] = {key : input(f'Please enter {input_prompt}: ') for key, input_prompt in KEYS_AND_PROMPTS}  # ask for input and set all entries
 
-    with open(f'{CONFIG_FILENAME}.ini', 'w') as configfile:
+    with open(CONFIG_FILENAME, 'w') as configfile:
         config.write(configfile)
     
 
@@ -187,7 +189,6 @@ def run():
     """
     main(sys.argv[1:])
 
-
 if __name__ == "__main__":
     # ^  This is a guard statement that will prevent the following code from
     #    being executed in the case someone imports this file instead of
@@ -202,7 +203,7 @@ if __name__ == "__main__":
     config_setup()
 
     config = configparser.ConfigParser()
-    config.read(f'{CONFIG_FILENAME}.ini')
+    config.read(CONFIG_FILENAME)
 
     default_config = config['DEFAULT']
 
@@ -212,3 +213,4 @@ if __name__ == "__main__":
     AUTH_EMAIL = default_config['auth_email']
 
     run()
+    
