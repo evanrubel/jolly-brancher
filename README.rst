@@ -3,7 +3,7 @@ jolly_brancher
 ==============
 
 
-Add a short description here!
+A sweet branch creation tool
 
 
 Description
@@ -15,14 +15,27 @@ A longer description of your project goes here...
 Installation
 ============
 ```
-ahonnecke@contranym:~/src/jolly_brancher$ sudo pip install -e .
+pip install --user jolly-brancher
+```
+
+Installation For Development
+============
+```
+ahonnecke@contranym:~/src/jolly_brancher$ python3 -m site | grep USER_SITE
+USER_SITE: '/home/ahonnecke/.local/lib/python3.8/site-packages' (exists)
+ENABLE_USER_SITE: True
+```
+Note the USER_SITE packages path, that is passed in to the prefix
+
+```
+ahonnecke@contranym:~/src/jolly_brancher$ pip install --prefix=/home/ahonnecke/.local/lib/python3.8/site-packages --force-reinstall -e .
 Obtaining file:///home/ahonnecke/src/jolly_brancher
   Installing build dependencies ... done
   Getting requirements to build wheel ... done
     Preparing wheel metadata ... done
 Installing collected packages: jolly-brancher
   Attempting uninstall: jolly-brancher
-    Found existing installation: jolly-brancher 0.0.post1.dev1+g12a84b8.d20210708
+    Found existing installation: jolly-brancher 0.0.post1.dev3+g8723568.d20210709
     Can't uninstall 'jolly-brancher'. No files were found to uninstall.
   Running setup.py develop for jolly-brancher
 Successfully installed jolly-brancher
