@@ -26,15 +26,13 @@ import os
 import subprocess
 import sys
 import warnings
+from subprocess import PIPE, Popen
 
 from jira import JIRA
 from prompt_toolkit import prompt
 from prompt_toolkit.completion import WordCompleter
 
 from jolly_brancher import __version__
-
-# DONOTCOMMIT
-REMOTE = "upstream"
 
 __author__ = "Ashton Von Honnecke"
 __copyright__ = "Ashton Von Honnecke"
@@ -209,32 +207,66 @@ def main(args):
     print(myissue)
     print(branch_name)
 
-    # We're assuming that the user has cded to the appropriate dir
-
     os.chdir(REPO_ROOT + "/" + repo)
-    print(branch_name)
 
-    # git.checkout('dev')
-    # git.reset('--hard', 'upstream/dev')
-    # git checkout -b feature/V2X-2226_add-the-following-curves-to-the-curve-database upstream/dev
-    
+    p = Popen(["git", "remote", "-v"], stdin=PIPE, stdout=PIPE, stderr=PIPE)
+    output, err = p.communicate(b"input data that is passed to subprocess' stdin")
+    rc = p.returncode
+
+    decoded = output.decode("utf-8")
+    remotes = {}
+    for remote in decoded.split("\n"):
+        try:
+            # upstream	git@github.com:pasa-v2x/hard-braking-infer.git (fetch)
+            name, path, action = remote.split()
+        except ValueError:
+            continue
+
+        if "push" in action:
+            remotes[path] = name
+
+    if len(remotes) == 1:
+        REMOTE = list(remotes.items())[0][1]
+    elif len(remotes) > 1:
+        print("The repo has multiple remotes, which should we push to?")
+        all_remotes = list(remotes.items())
+        remote_completer = WordCompleter([x[0] for x in all_remotes])
+        chosen_path = prompt("Choose repository: ", completer=remote_completer)
+        REMOTE = remotes[chosen_path]
+
+    cmd = ["git", "checkout", "-b", branch_name, f"{REMOTE}/{args.parent}"]
+
+    subprocess.run(cmd, check=True)
+
     # create branch locally
     print(f"Creating the branch {branch_name}")
-    # local_branch_cmd = ["git", "checkout", "-b", branch_name, f"{REMOTE}/{args.parent}"]  
-    local_branch_cmd = ["git", "checkout", "-b", branch_name, f"{REMOTE}/{args.parent}"]  # this should change
+    # local_branch_cmd = ["git", "checkout", "-b", branch_name, f"{REMOTE}/{args.parent}"]
+    local_branch_cmd = [
+        "git",
+        "checkout",
+        "-b",
+        branch_name,
+        f"{REMOTE}/{args.parent}",
+    ]  # this should change
     subprocess.run(local_branch_cmd, check=True)
 
     # push branch to remote repo
-    print('Pushing to remote repo...')
+    print("Pushing to remote repo...")
     push_branch_cmd = ["git", "push"]
     subprocess.run(push_branch_cmd, check=True)
 
     # get URL to branch on GitHub
-    repo_url = subprocess.check_output(['git', 'config', '--get', 'remote.origin.url']).decode('utf-8').strip('.git\n')
-    branch_url = f'{repo_url}/tree/{branch_name}'
-    
-    print('Adding comment with branch name to issue...')
-    jira.add_comment(myissue, f'Jolly Brancher generated {branch_name} at {branch_url}.')
+    repo_url = (
+        subprocess.check_output(["git", "config", "--get", "remote.origin.url"])
+        .decode("utf-8")
+        .strip(".git\n")
+    )
+    branch_url = f"{repo_url}/tree/{branch_name}"
+
+    print("Adding comment with branch name to issue...")
+    jira.add_comment(
+        myissue, f"Jolly Brancher generated {branch_name} at {branch_url}."
+    )
 
 
 def run():
