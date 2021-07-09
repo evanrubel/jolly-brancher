@@ -202,8 +202,7 @@ def main(args):
     for bad_char in ["."]:
         summary = summary.replace(bad_char, "")
 
-    issue_type = str(myissue.fields.issuetype).upper()  # should issue_type be upper() or lower()?
-    # issue_type = issue_type.upper()
+    issue_type = str(myissue.fields.issuetype).upper()
 
     branch_name = f"{issue_type}/{ticket}-{summary}"
 
