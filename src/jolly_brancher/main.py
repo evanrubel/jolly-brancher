@@ -131,6 +131,16 @@ def setup_logging(loglevel):
         level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
     )
 
+def fetch_config():
+    config_setup()
+
+    config = configparser.ConfigParser()
+    config.read(CONFIG_FILENAME)
+
+    default_config = config['DEFAULT']
+
+    return default_config['repo_root'], default_config['token'], default_config['base_url'], default_config['auth_email']
+    
 
 def main(args):
     """Wrapper allowing :func:`fib` to be called with string arguments in a CLI fashion
@@ -143,17 +153,7 @@ def main(args):
           (for example  ``["--verbose", "42"]``).
     """
 
-    config_setup()
-
-    config = configparser.ConfigParser()
-    config.read(CONFIG_FILENAME)
-
-    default_config = config['DEFAULT']
-
-    REPO_ROOT = default_config['repo_root']
-    TOKEN = default_config['token']
-    BASE_URL = default_config['base_url']
-    AUTH_EMAIL = default_config['auth_email']
+    REPO_ROOT, TOKEN, BASE_URL, AUTH_EMAIL = fetch_config()
 
     jira = JIRA(BASE_URL, basic_auth=(AUTH_EMAIL, TOKEN))
 
