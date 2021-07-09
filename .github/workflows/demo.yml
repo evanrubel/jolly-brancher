@@ -1,4 +1,4 @@
-name: jolly-brancher
+name: Unit Test
 
 on:
   push:
