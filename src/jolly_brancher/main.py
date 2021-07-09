@@ -221,8 +221,8 @@ def main(args):
     
     # create branch locally
     print(f"Creating the branch {branch_name}")
-    # local_branch_cmd = ["git", "checkout", "-b", branch_name, f"{REMOTE}/{args.parent}"]
-    local_branch_cmd = ["git", "checkout", "-b", branch_name, f"{repo}/{args.parent}"]
+    # local_branch_cmd = ["git", "checkout", "-b", branch_name, f"{REMOTE}/{args.parent}"]  
+    local_branch_cmd = ["git", "checkout", "-b", branch_name, f"origin/{args.parent}"]  # this should change
     subprocess.run(local_branch_cmd, check=True)
 
     # push branch to remote repo
@@ -230,6 +230,7 @@ def main(args):
     push_branch_cmd = ["git", "push"]
     subprocess.run(push_branch_cmd, check=True)
 
+    # get URL to branch on GitHub
     repo_url = subprocess.check_output(['git', 'config', '--get', 'remote.origin.url']).decode('utf-8').strip('.git\n')
     branch_url = f'{repo_url}/tree/{branch_name}'
     
