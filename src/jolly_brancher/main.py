@@ -102,7 +102,7 @@ def parse_args(args, repo_dirs):
 
     parser.add_argument(
         "--repo",
-        help="Repository to create banch in",
+        help="Repository to create branch in",
         choices=repo_dirs,
         required=False,
     )
@@ -197,15 +197,18 @@ def main(args):
     ticket = args.ticket.upper()
     myissue = jira.issue(ticket)
 
-    summary = myissue.fields.summary
+    summary = myissue.fields.summary.lower()
     summary = summary.replace(" ", "-")
     for bad_char in ["."]:
         summary = summary.replace(bad_char, "")
 
-    issue_type = str(myissue.fields.issuetype)
-    issue_type = issue_type.upper()
+    issue_type = str(myissue.fields.issuetype).lower()  # should issue_type be upper() or lower()?
+    # issue_type = issue_type.upper()
 
-    branch_name = f"{issue_type}/{ticket}--{summary}"
+    branch_name = f"{issue_type}/{ticket}-{summary}"
+
+    print(myissue)
+    print(branch_name)
 
     # We're assuming that the user has cded to the appropriate dir
 
@@ -220,6 +223,16 @@ def main(args):
     cmd = ["git", "checkout", "-b", branch_name, f"{REMOTE}/{args.parent}"]
 
     subprocess.run(cmd, check=True)
+
+    # output = subprocess.check_output(['git', 'remote', 'show', 'origin'])
+    output = subprocess.check_output(['git', 'config', '--get', 'remote.origin.url'])
+
+    # git config --get remote.origin.url
+
+    branch_url = output
+    
+    print('Adding comment with branch name to issue...')
+    jira.add_comment(myissue, f'Jolly Brancher generated {branch_name} at {branch_url}.')
 
 
 def run():
