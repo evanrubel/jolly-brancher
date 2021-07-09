@@ -235,13 +235,9 @@ def main(args):
         chosen_path = prompt("Choose repository: ", completer=remote_completer)
         REMOTE = remotes[chosen_path]
 
-    cmd = ["git", "checkout", "-b", branch_name, f"{REMOTE}/{args.parent}"]
+    fetch_branch_cmd = ["git", "fetch", "--all"]
+    subprocess.run(fetch_branch_cmd, check=True)
 
-    subprocess.run(cmd, check=True)
-
-    # create branch locally
-    print(f"Creating the branch {branch_name}")
-    # local_branch_cmd = ["git", "checkout", "-b", branch_name, f"{REMOTE}/{args.parent}"]
     local_branch_cmd = [
         "git",
         "checkout",
@@ -253,21 +249,19 @@ def main(args):
 
     # push branch to remote repo
     print("Pushing to remote repo...")
-    push_branch_cmd = ["git", "push"]
+    push_branch_cmd = ["git", "push", REMOTE, "HEAD"]
     subprocess.run(push_branch_cmd, check=True)
 
     # get URL to branch on GitHub
-    repo_url = (
-        subprocess.check_output(["git", "config", "--get", "remote.origin.url"])
-        .decode("utf-8")
-        .strip(".git\n")
-    )
-    branch_url = f"{repo_url}/tree/{branch_name}"
+    # repo_url = (
+    #     subprocess.check_output(["git", "config", "--get", "remote.origin.url"])
+    #     .decode("utf-8")
+    #     .strip(".git\n")
+    # )
+    # branch_url = f"{repo_url}/tree/{branch_name}"
 
     print("Adding comment with branch name to issue...")
-    jira.add_comment(
-        myissue, f"Jolly Brancher generated {branch_name} at {branch_url}."
-    )
+    jira.add_comment(myissue, f"Jolly Brancher generated {branch_name}.")
 
 
 def run():
