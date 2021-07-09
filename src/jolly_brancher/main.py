@@ -20,11 +20,11 @@ References:
     - https://pip.pypa.io/en/stable/reference/pip_install
 """
 import argparse
+import configparser
 import logging
 import os
 import subprocess
 import sys
-import configparser
 import warnings
 
 from jira import JIRA
