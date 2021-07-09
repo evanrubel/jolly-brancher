@@ -248,13 +248,13 @@ def main(args):
     push_branch_cmd = ["git", "push", REMOTE, "HEAD"]
     subprocess.run(push_branch_cmd, check=True)
 
-    # get URL to branch on GitHub
-    repo_url = (
-        subprocess.check_output(["git", "config", "--get", "remote.origin.url"])
-        .decode("utf-8")
-        .strip(".git\n")
-    )
-    branch_url = f"{repo_url}/tree/{branch_name}"
+    # # get URL to branch on GitHub
+    # repo_url = (
+    #     subprocess.check_output(["git", "config", "--get", "remote.origin.url"])
+    #     .decode("utf-8")
+    #     .strip(".git\n")
+    # )
+    # branch_url = f"{repo_url}/tree/{branch_name}"
 
     print("Adding comment with branch name to issue...")
     jira.add_comment(
