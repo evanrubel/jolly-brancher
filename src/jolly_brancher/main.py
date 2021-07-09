@@ -42,11 +42,22 @@ __license__ = "MIT"
 
 _logger = logging.getLogger(__name__)
 
+FILENAME = "jolly_brancher.ini"
+
 # CONFIG VARS
-KEYS_AND_PROMPTS = [['auth_email', 'your login email for Atlassian'], ['base_url', 'the base URL for Atlassian (e.g., https://cirrusv2x.atlassian.net)'], ['token', 'your Atlassian API token which can be generated here (https://id.atlassian.com/manage-profile/security/api-tokens)'], ['repo_root', 'the path to the root directory for the repository']]
-CONFIG_DIR = os.path.expanduser('~/.config')
-CONFIG_FILENAME = os.path.join(CONFIG_DIR, 'jolly_brancher.ini')
-DEFAULT_SECTION_NAME = 'DEFAULT'
+KEYS_AND_PROMPTS = [
+    ["auth_email", "your login email for Atlassian"],
+    ["base_url", "the base URL for Atlassian (e.g., https://cirrusv2x.atlassian.net)"],
+    [
+        "token",
+        "your Atlassian API token which can be generated here (https://id.atlassian.com/manage-profile/security/api-tokens)",
+    ],
+    ["repo_root", "the path to the root directory for the repository"],
+]
+CONFIG_DIR = os.path.expanduser("~/.config")
+CONFIG_FILENAME = os.path.join(CONFIG_DIR, FILENAME)
+DEFAULT_SECTION_NAME = "DEFAULT"
+
 
 def config_setup():
     config = configparser.ConfigParser()
@@ -58,16 +69,24 @@ def config_setup():
         config.read(CONFIG_FILENAME)
 
         for key, input_prompt in KEYS_AND_PROMPTS:
-            if key not in config[DEFAULT_SECTION_NAME] or config[DEFAULT_SECTION_NAME][key] == '':  # check all entries are present and populated
-                config[DEFAULT_SECTION_NAME][key] = input(f'Please enter {input_prompt}: ')
+            if (
+                key not in config[DEFAULT_SECTION_NAME]
+                or config[DEFAULT_SECTION_NAME][key] == ""
+            ):  # check all entries are present and populated
+                config[DEFAULT_SECTION_NAME][key] = input(
+                    f"Please enter {input_prompt}: "
+                )
 
     else:
-        warnings.warn('~/.config/jolly-brancher.ini does not exist. Creating the file now...')
-        config[DEFAULT_SECTION_NAME] = {key : input(f'Please enter {input_prompt}: ') for key, input_prompt in KEYS_AND_PROMPTS}  # ask for input and set all entries
+        warnings.warn(f"~/.config/{FILENAME} does not exist. Creating the file now...")
+        config[DEFAULT_SECTION_NAME] = {
+            key: input(f"Please enter {input_prompt}: ")
+            for key, input_prompt in KEYS_AND_PROMPTS
+        }  # ask for input and set all entries
 
-    with open(CONFIG_FILENAME, 'w') as configfile:
+    with open(CONFIG_FILENAME, "w") as configfile:
         config.write(configfile)
-    
+
 
 # ---- CLI ----
 # The functions defined in this section are wrappers around the main Python
@@ -133,16 +152,22 @@ def setup_logging(loglevel):
         level=loglevel, stream=sys.stdout, format=logformat, datefmt="%Y-%m-%d %H:%M:%S"
     )
 
+
 def fetch_config():
     config_setup()
 
     config = configparser.ConfigParser()
     config.read(CONFIG_FILENAME)
 
-    default_config = config['DEFAULT']
+    default_config = config["DEFAULT"]
 
-    return default_config['repo_root'], default_config['token'], default_config['base_url'], default_config['auth_email']
-    
+    return (
+        default_config["repo_root"],
+        default_config["token"],
+        default_config["base_url"],
+        default_config["auth_email"],
+    )
+
 
 def main(args):
     """Wrapper allowing :func:`fib` to be called with string arguments in a CLI fashion
@@ -204,6 +229,7 @@ def run():
     """
     main(sys.argv[1:])
 
+
 if __name__ == "__main__":
     # ^  This is a guard statement that will prevent the following code from
     #    being executed in the case someone imports this file instead of
@@ -217,4 +243,3 @@ if __name__ == "__main__":
     #
 
     run()
-    
