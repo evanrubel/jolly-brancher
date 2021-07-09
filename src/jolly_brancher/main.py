@@ -234,13 +234,6 @@ def main(args):
         chosen_path = prompt("Choose repository: ", completer=remote_completer)
         REMOTE = remotes[chosen_path]
 
-    cmd = ["git", "checkout", "-b", branch_name, f"{REMOTE}/{args.parent}"]
-
-    subprocess.run(cmd, check=True)
-
-    # create branch locally
-    print(f"Creating the branch {branch_name}")
-    # local_branch_cmd = ["git", "checkout", "-b", branch_name, f"{REMOTE}/{args.parent}"]
     local_branch_cmd = [
         "git",
         "checkout",
