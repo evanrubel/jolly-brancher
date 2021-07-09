@@ -33,9 +33,7 @@ from prompt_toolkit.completion import WordCompleter
 from jolly_brancher import __version__
 
 # DONOTCOMMIT
-# REPO_ROOT = "/home/ahonnecke/src"
 REMOTE = "upstream"
-# TOKEN = ""
 
 __author__ = "Ashton Von Honnecke"
 __copyright__ = "Ashton Von Honnecke"
@@ -142,8 +140,6 @@ def main(args):
       args (List[str]): command line parameters as list of strings
           (for example  ``["--verbose", "42"]``).
     """
-    # auth_email = "ashton.honnecke@us.panasonic.com"
-
     jira = JIRA(BASE_URL, basic_auth=(AUTH_EMAIL, TOKEN))
 
     repo_dirs = os.listdir(REPO_ROOT)
